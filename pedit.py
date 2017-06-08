@@ -45,7 +45,7 @@ class PEdit(object):
         print("The available resources locations:\n")
         for dir_id in self.pec.entry_directories:
             print("{0}) size of {1} bytes".format(
-                dir_id, self.pec.entry_directories[101].data.struct.Size))
+                dir_id, self.pec.entry_directories[dir_id].data.struct.Size))
         selection = int(input("\nplease enter an id to view/edit: "))
 
 
