@@ -35,7 +35,8 @@ class PEdit(object):
         while True:
             print("The available resource types are:\n")
             for type_id in self.pec.entries:
-                print("{0}) {1}".format(type_id, self.pec._resource_type[type_id]))
+                print("{0}) {1}".format(
+                    type_id, self.pec._resource_type[type_id]))
             selection = int(input("\nplease enter an id to edit: "))
 
             if selection in self.pec.entries:
@@ -48,6 +49,8 @@ class PEdit(object):
                 dir_id, self.pec.entry_directories[dir_id].data.struct.Size))
         selection = int(input("\nplease enter an id to view/edit: "))
 
+        if selection in self.pec.entry_directories:
+            return self.pec.entry_directories[selection]
 
     def main(self):
         """Start the interactive session for PEdit."""
@@ -69,7 +72,7 @@ class PEdit(object):
         self.pec.entries = readpe.get_entry_points()
         self.pec.entry = self.get_resource_type()
         self.pec.entry_directories = readpe.get_entry_directories()
-        self.get_resource_directory()
+        self.pec.directory = self.get_resource_directory()
         self.pec.resource_val = readpe.get_resource_val()
 
         readpe.main()
