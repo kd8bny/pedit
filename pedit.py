@@ -75,8 +75,6 @@ class PEdit(object):
         self.pec.directory = self.get_resource_directory()
         self.pec.resource_val = readpe.get_resource_val()
 
-        readpe.main()
-
 
 if __name__ == '__main__':
     PEdit().main()
