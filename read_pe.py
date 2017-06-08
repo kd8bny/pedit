@@ -21,21 +21,17 @@ class Read_PE(object):
         return entries
 
     def get_entry_directories(self):
-        directories = {dir_.id: dir_ for dir_ in
-                       self.pec.entry.directory.entries}
+        directories = {}
+
+        for dir_entry in self.pec.entry.directory.entries:
+            # This will probably bite me in the ass. Multiple entries per dir?
+            directories[dir_entry.id] = dir_entry.directory.entries[0]
 
         return directories
 
     def get_resource_val(self):
         resource_strings = list()
-        rt_string_directory = self.pe.DIRECTORY_ENTRY_RESOURCE.entries[type_id]
 
-        for entry in rt_string_directory.directory.entries:
-            pass
-
-            # Get the RVA of the string data and
-            # size of the string data
-            #
         data_rva = entry.directory.entries[0].data.struct.OffsetToData
         size = entry.directory.entries[0].data.struct.Size
         print('Directory entry at RVA', hex(data_rva), 'of size', hex(size))

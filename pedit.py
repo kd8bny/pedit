@@ -43,12 +43,10 @@ class PEdit(object):
 
     def get_resource_directory(self):
         print("The available resources locations:\n")
-        for id_ in self.pec.entry_directories:
-            print("{0}".format(id_))
+        for dir_id in self.pec.entry_directories:
+            print("{0}) size of {1} bytes".format(
+                dir_id, self.pec.entry_directories[101].data.struct.Size))
         selection = int(input("\nplease enter an id to view/edit: "))
-
-        #if selection in self.pec.entries:
-        #    return self.pec.entries[selection]
 
 
     def main(self):
