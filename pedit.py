@@ -9,6 +9,7 @@ import subprocess
 
 from pe_container import PE_Container
 from read_pe import Read_PE
+from write_pe import Write_PE
 
 
 class PEdit(object):
@@ -59,10 +60,10 @@ class PEdit(object):
         EDITOR = os.environ.get('EDITOR', 'vi')
         str_len = len(self.pec.resource_val)
         resource_val = ""
-        if self.pec.resource_val[str_len - 5:] is file_ending:
-            resource_val = self.pec.resource_val[:str_len - 5]
-        else:
-            resource_val = self.pec.resource_val
+        # if self.pec.resource_val[str_len - 5:] is file_ending:
+        #    resource_val = self.pec.resource_val[:str_len - 5]
+        # else:
+        resource_val = self.pec.resource_val
 
         with tempfile.NamedTemporaryFile(suffix=".tmp") as temp_file:
             temp_file.write(bytes(resource_val, 'utf-8'))
@@ -70,7 +71,7 @@ class PEdit(object):
             subprocess.run([EDITOR, temp_file.name])
 
             temp_file.seek(0)
-            resource_val_new = temp_file.read().decode('utf-8') + file_ending
+            resource_val_new = temp_file.read().decode('utf-8')# + file_ending
 
             if resource_val_new == self.pec.resource_val:
                 sys.exit("\nValue was not changed. Exiting\n")
@@ -91,19 +92,17 @@ class PEdit(object):
 
         pe = pefile.PE(args.file, fast_load=args.fast_load)
         self.pec = PE_Container(pe)
-        readpe = Read_PE(self.pec)
-        # writepe
+        read_pe = Read_PE(self.pec)
+        write_pe = Write_PE(self.pec)
 
-        self.pec.entries = readpe.get_entry_points()
+        self.pec.entries = read_pe.get_entry_points()
         self.pec.entry = self.get_resource_type()
-        self.pec.entry_directories = readpe.get_entry_directories()
+        self.pec.entry_directories = read_pe.get_entry_directories()
         self.pec.directory = self.get_resource_directory()
-        self.pec.resource_val = readpe.get_resource_val()
+        self.pec.resource_val = read_pe.get_resource_val()
 
         self.get_new_resource_val()
-
-
-
+        write_pe.set_resource_val()
 
 
 
