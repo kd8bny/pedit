@@ -103,6 +103,8 @@ class PEdit(object):
 
         self.get_new_resource_val()
         write_pe.set_resource_val()
+        filename = input("New Filename:")
+        write_pe.write_executable(filename)
 
 
 

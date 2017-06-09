@@ -16,10 +16,13 @@ class Write_PE(object):
 
     def set_resource_val(self):
 
-        data_rva = self.pec.directory.data.struct.OffsetToData
+        data_rva = self.pec.directory.data.struct.OffsetToData + 2
         data_size = self.pec.directory.data.struct.Size
 
-        data = self.pe.get_memory_mapped_image()[data_rva:data_rva + data_size]
-        self.pe.set_bytes_at_rva(data_rva, bytes(self.pec.resource_val_new, 'utf-8'))
+        resource = bytes(self.pec.resource_val_new, 'utf-8')
+        empty_space = data_size - len(resource)
+        resource += b'\0' * empty_space
+        self.pe.set_bytes_at_rva(data_rva, resource)
 
-        self.pe.write(filename='new_file.exe')
+    def write_executable(self, filename):
+        self.pe.write(filename=filename)
