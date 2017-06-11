@@ -1,5 +1,4 @@
-"""
-"""
+"""Public module to write contents of portable exectutable."""
 import sys
 import os
 import argparse
@@ -15,7 +14,7 @@ class Write_PE(object):
         self.pe = self.pec.pe
 
     def set_resource_val(self):
-
+        """Set value at selected directory."""
         data_rva = self.pec.directory.data.struct.OffsetToData + 2
         data_size = self.pec.directory.data.struct.Size
 
@@ -25,4 +24,5 @@ class Write_PE(object):
         self.pe.set_bytes_at_rva(data_rva, resource)
 
     def write_executable(self, filename):
+        """Write new executable to disk."""
         self.pe.write(filename=filename)

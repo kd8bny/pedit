@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
+"""
+Pedit, portable executable resource editor.
 
+The peedit python application starts the interactive session to allow the user
+to select the desired resource to edit and provide means to edit resources.
+
+Pedit makes use of the pefile module and utilizes many data structures of such.
+
+When loaded, pedit with instantiate a pe container which will contain the pe
+object, chosen resources and respective values.
+"""
 import sys
 import os
 import argparse
@@ -27,13 +37,16 @@ class PEdit(object):
         parser = argparse.ArgumentParser(description='Utility designed to \
             edit resources at a given offset of a portable executable')
         parser.add_argument("file", help="path to portable executable")
-        parser.add_argument("-f", "--fast-load", action="store_true", help=" prevent parsing the directories. In large PE files this can make loading significantly faster ")
+        parser.add_argument(
+            "-f", "--fast-load", action="store_true", help="Load large PEs \
+            faster by not not parsing all directories.")
         parser.add_argument("--version", action="store_true", help="Version \
             information")
 
         return parser.parse_args()
 
     def get_resource_type(self):
+        """Start interactive chooser to display resource types."""
         while True:
             print("The available resource types are:\n")
             for type_id in self.pec.entries:
@@ -45,6 +58,7 @@ class PEdit(object):
                 return self.pec.entries[selection]
 
     def get_resource_directory(self):
+        """Start interactive chooser to display resource directories."""
         print("The available resources locations:\n")
         for dir_id in self.pec.entry_directories:
             print("{0}) size of {1} bytes".format(
@@ -55,6 +69,7 @@ class PEdit(object):
             return self.pec.entry_directories[selection]
 
     def get_new_resource_val(self):
+        """Open editor to allow changing resource strings."""
         # TODO check for EOF and new line chars
         # file_ending = b"\nEOF\n"
         EDITOR = os.environ.get('EDITOR', 'vi')
@@ -71,7 +86,7 @@ class PEdit(object):
             subprocess.run([EDITOR, temp_file.name])
 
             temp_file.seek(0)
-            resource_val_new = temp_file.read().decode('utf-8')# + file_ending
+            resource_val_new = temp_file.read().decode('utf-8') # file_ending
 
             if resource_val_new == self.pec.resource_val:
                 sys.exit("\nValue was not changed. Exiting\n")
@@ -105,7 +120,6 @@ class PEdit(object):
         write_pe.set_resource_val()
         filename = input("New Filename:")
         write_pe.write_executable(filename)
-
 
 
 if __name__ == '__main__':

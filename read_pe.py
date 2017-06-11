@@ -1,5 +1,4 @@
-"""
-"""
+"""Public module to read contents of portable exectutable."""
 import sys
 import os
 import argparse
@@ -15,12 +14,14 @@ class Read_PE(object):
         self.pe = self.pec.pe
 
     def get_entry_points(self):
+        """Parse through pe and returnes pefile resource entries."""
         entries = {entry.id: entry
                    for entry in self.pe.DIRECTORY_ENTRY_RESOURCE.entries}
 
         return entries
 
     def get_entry_directories(self):
+        """Parse directories for selected entry point."""
         directories = {}
 
         for dir_entry in self.pec.entry.directory.entries:
@@ -30,6 +31,7 @@ class Read_PE(object):
         return directories
 
     def get_resource_val(self):
+        """Return value at selected directory."""
         resource_val = list()
 
         data_rva = self.pec.directory.data.struct.OffsetToData

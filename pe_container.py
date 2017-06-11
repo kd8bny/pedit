@@ -1,4 +1,8 @@
+"""PE container, Generic object to hold PE object and known resources."""
+
+
 class PE_Container(object):
+    """."""
 
     _resource_type = {
         1:  'RT_CURSOR',
