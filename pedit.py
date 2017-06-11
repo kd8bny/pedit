@@ -38,8 +38,11 @@ class PEdit(object):
             edit resources at a given offset of a portable executable')
         parser.add_argument("file", help="path to portable executable")
         parser.add_argument(
+            "-i", "--insert", help="Insert a given file \
+            into a resource directory")
+        parser.add_argument(
             "-f", "--fast-load", action="store_true", help="Load large PEs \
-            faster by not not parsing all directories.")
+            faster by not not parsing all directories")
         parser.add_argument("--version", action="store_true", help="Version \
             information")
 
@@ -68,10 +71,9 @@ class PEdit(object):
         if selection in self.pec.entry_directories:
             return self.pec.entry_directories[selection]
 
-    def get_new_resource_val(self):
+    def edit_string_resource(self):
         """Open editor to allow changing resource strings."""
         EDITOR = os.environ.get('EDITOR', 'vi')
-        str_len = len(self.pec.resource_val)
 
         with tempfile.NamedTemporaryFile(suffix=".tmp") as temp_file:
             temp_file.write(self.pec.resource_val)
@@ -84,7 +86,20 @@ class PEdit(object):
             if resource_val_new == self.pec.resource_val:
                 sys.exit("\nResource was not changed. Exiting\n")
             else:
-                self.pec.resource_val_new = resource_val_new
+                return resource_val_new
+
+    def insert_resource(self, filename):
+        if not os.path.isfile(filename):
+            sys.exit("Supplied file to insert does not exist.")
+
+        data_size = self.pec.directory.data.struct.Size
+        with open(filename, 'rb') as insert_file:
+            f = insert_file.read()
+            bfile = bytes(f)
+            if len(bfile) > data_size:
+                sys.exit("File is too large to insert into this resource")
+
+            return bfile
 
     def main(self):
         """Start the interactive session for PEdit."""
@@ -109,9 +124,13 @@ class PEdit(object):
         self.pec.directory = self.get_resource_directory()
         self.pec.resource_val = read_pe.get_resource_val()
 
-        self.get_new_resource_val()
+        if args.insert is None:
+            self.pec.resource_val_new = self.edit_string_resource()
+        else:
+            self.pec.resource_val_new = self.insert_resource(args.insert)
+
         write_pe.set_resource_val()
-        filename = input("New Filename:")
+        filename = input("\nNew Filename:")
         write_pe.write_executable(filename)
 
 
