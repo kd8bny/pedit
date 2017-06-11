@@ -70,26 +70,19 @@ class PEdit(object):
 
     def get_new_resource_val(self):
         """Open editor to allow changing resource strings."""
-        # TODO check for EOF and new line chars
-        # file_ending = b"\nEOF\n"
         EDITOR = os.environ.get('EDITOR', 'vi')
         str_len = len(self.pec.resource_val)
-        resource_val = ""
-        # if self.pec.resource_val[str_len - 5:] is file_ending:
-        #    resource_val = self.pec.resource_val[:str_len - 5]
-        # else:
-        resource_val = self.pec.resource_val
 
         with tempfile.NamedTemporaryFile(suffix=".tmp") as temp_file:
-            temp_file.write(bytes(resource_val, 'utf-8'))
+            temp_file.write(self.pec.resource_val)
             temp_file.flush()
             subprocess.run([EDITOR, temp_file.name])
 
             temp_file.seek(0)
-            resource_val_new = temp_file.read().decode('utf-8') # file_ending
+            resource_val_new = temp_file.read()
 
             if resource_val_new == self.pec.resource_val:
-                sys.exit("\nValue was not changed. Exiting\n")
+                sys.exit("\nResource was not changed. Exiting\n")
             else:
                 self.pec.resource_val_new = resource_val_new
 

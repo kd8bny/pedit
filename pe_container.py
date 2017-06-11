@@ -2,7 +2,7 @@
 
 
 class PE_Container(object):
-    """."""
+    """Hold the values of the loaded PE and resources you wish to change."""
 
     _resource_type = {
         1:  'RT_CURSOR',
@@ -37,5 +37,5 @@ class PE_Container(object):
         # Actual resource selections
         self.entry = None
         self.directory = None
-        self.resource_val = ""
-        self.resource_val_new = ""
+        self.resource_val = b""
+        self.resource_val_new = b""

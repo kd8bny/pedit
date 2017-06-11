@@ -54,4 +54,4 @@ class Read_PE(object):
             offset += str_length*2
             resource_val.append(str_data)
 
-        return resource_val[0].decode('ascii')
+        return resource_val[0]
