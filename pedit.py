@@ -96,19 +96,28 @@ class PEdit(object):
     def edit_string_resource(self):
         """Open editor to allow changing resource strings."""
         EDITOR = os.environ.get('EDITOR', 'vi')
+        data_size = self.pec.directory.data.struct.Size
 
-        with tempfile.NamedTemporaryFile(suffix=".tmp") as temp_file:
-            temp_file.write(self.pec.resource_val)
-            temp_file.flush()
-            subprocess.run([EDITOR, temp_file.name])
+        resource_val = self.pec.resource_val
+        while True:
+            with tempfile.NamedTemporaryFile(suffix=".tmp") as temp_file:
+                temp_file.write(resource_val)
+                temp_file.flush()
+                subprocess.run([EDITOR, temp_file.name])
 
-            temp_file.seek(0)
-            resource_val_new = temp_file.read()
+                temp_file.seek(0)
+                tf = temp_file.read()
+                resource_val_new = bytes(tf)
 
-            if resource_val_new == self.pec.resource_val:
-                sys.exit("\nResource was not changed. Exiting\n")
-            else:
-                return resource_val_new
+                if resource_val_new == self.pec.resource_val:
+                    sys.exit("\nResource was not changed. Exiting\n")
+                elif len(resource_val_new) > data_size:
+                    resource_val = resource_val_new
+                    input("\nNew resources is too large to insert into this resource by {0} bytes.\nPress any key to continue".format(len(resource_val) - data_size))
+                else:
+                    break
+
+        return resource_val_new
 
     def insert_resource(self, filename):
         if not os.path.isfile(filename):
