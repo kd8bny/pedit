@@ -38,8 +38,12 @@ class PEdit(object):
             edit resources at a given offset of a portable executable')
         parser.add_argument("file", help="path to portable executable")
         parser.add_argument(
-            "-i", "--insert", help="Insert a given file \
-            into a resource directory")
+            "-r", "--resource", nargs=2, type=int, default=(-1, -1),
+            metavar=('TYPE', 'DIRECOTRY'),
+            help="Specify resource type and directory. Use type codes e.g.\
+            10, 101")
+        parser.add_argument(
+            "-i", "--insert", help="Insert a file into a resource directory")
         parser.add_argument(
             "-f", "--fast-load", action="store_true", help="Load large PEs \
             faster by not not parsing all directories")
@@ -48,28 +52,46 @@ class PEdit(object):
 
         return parser.parse_args()
 
-    def get_resource_type(self):
-        """Start interactive chooser to display resource types."""
+    def get_resource_type(self, selection=-1):
+        """Start interactive chooser to display resource types.
+        Pass an ID as selection to auto select.
+        """
         while True:
-            print("The available resource types are:\n")
-            for type_id in self.pec.entries:
-                print("{0}) {1}".format(
-                    type_id, self.pec._resource_type[type_id]))
-            selection = int(input("\nplease enter an id to edit: "))
-
             if selection in self.pec.entries:
-                return self.pec.entries[selection]
+                break
+            else:
+                selection = None
+                print("\nSupplied type ID is not valid\n")
 
-    def get_resource_directory(self):
-        """Start interactive chooser to display resource directories."""
-        print("The available resources locations:\n")
-        for dir_id in self.pec.entry_directories:
-            print("{0}) size of {1} bytes".format(
-                dir_id, self.pec.entry_directories[dir_id].data.struct.Size))
-        selection = int(input("\nplease enter an id to view/edit: "))
+            if selection is None:
+                print("The available resource types are:\n")
+                for type_id in self.pec.entries:
+                    print("{0}) {1}".format(
+                        type_id, self.pec._resource_type[type_id]))
+                selection = int(input("\nplease enter an id to edit: "))
 
-        if selection in self.pec.entry_directories:
-            return self.pec.entry_directories[selection]
+        return self.pec.entries[selection]
+
+    def get_resource_directory(self, selection=-1):
+        """Start interactive chooser to display resource directories.
+        Pass an ID as selection to auto select.
+        """
+        while True:
+            if selection in self.pec.entry_directories:
+                break
+            else:
+                selection = None
+                print("\nSupplied directory is not valid\n")
+
+            if selection is None:
+                print("The available resources locations:\n")
+                for dir_id in self.pec.entry_directories:
+                    print("{0}) size of {1} bytes".format(
+                        dir_id, self.pec.entry_directories[dir_id].data.struct.Size))
+
+                selection = int(input("\nplease enter an id to view/edit: "))
+
+        return self.pec.entry_directories[selection]
 
     def edit_string_resource(self):
         """Open editor to allow changing resource strings."""
@@ -119,9 +141,9 @@ class PEdit(object):
         write_pe = Write_PE(self.pec)
 
         self.pec.entries = read_pe.get_entry_points()
-        self.pec.entry = self.get_resource_type()
+        self.pec.entry = self.get_resource_type(args.resource[0])
         self.pec.entry_directories = read_pe.get_entry_directories()
-        self.pec.directory = self.get_resource_directory()
+        self.pec.directory = self.get_resource_directory(args.resource[1])
         self.pec.resource_val = read_pe.get_resource_val()
 
         if args.insert is None:
@@ -130,7 +152,7 @@ class PEdit(object):
             self.pec.resource_val_new = self.insert_resource(args.insert)
 
         write_pe.set_resource_val()
-        filename = input("\nNew Filename:")
+        filename = input("\nNew Filename: ")
         write_pe.write_executable(filename)
 
 

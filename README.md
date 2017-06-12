@@ -23,6 +23,12 @@ pedit.py [OPTIONS] FILENAME
 -h, --help
     Shows the help dialog
 
+-i, --insert
+    Insert a file into a resource directory
+
+-r, --resource
+    Specify resource type and directory. Use type codes e.g. 10, 101
+
 -f, --fast-load
     Load large PEs faster by not not parsing all directories.
 ```
