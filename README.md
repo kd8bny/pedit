@@ -1,5 +1,5 @@
 # pedit
-## v1.1.0
+## v1.2.0
 ## About
 Pedit, portable executable resource editor.
 

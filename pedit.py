@@ -25,7 +25,7 @@ from write_pe import Write_PE
 class PEdit(object):
     """Edit resources of given portable executable."""
 
-    _version = "1.1.0"
+    _version = "1.2.0"
 
     def __init__(self):
         super(PEdit, self).__init__()
