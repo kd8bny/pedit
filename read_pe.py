@@ -1,8 +1,4 @@
 """Public module to read contents of portable exectutable."""
-import sys
-import os
-import argparse
-import pefile
 
 
 class Read_PE(object):
@@ -38,20 +34,5 @@ class Read_PE(object):
         data_size = self.pec.directory.data.struct.Size
 
         data = self.pe.get_memory_mapped_image()[data_rva:data_rva + data_size]
-        offset = 0
-        while True:
-            # Exit once there's no more data to read
-            if offset >= data_size:
-                break
 
-            str_length = self.pe.get_word_from_data(data[offset:offset + 2], 0)
-            offset += 2
-
-            if str_length == 0:
-                continue
-
-            str_data = self.pe.get_string_at_rva(data_rva + offset)
-            offset += str_length*2
-            resource_val.append(str_data)
-
-        return resource_val[0]
+        return data

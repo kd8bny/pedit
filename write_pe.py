@@ -1,8 +1,4 @@
 """Public module to write contents of portable exectutable."""
-import sys
-import os
-import argparse
-import pefile
 
 
 class Write_PE(object):
@@ -15,7 +11,7 @@ class Write_PE(object):
 
     def set_resource_val(self):
         """Set value at selected directory."""
-        data_rva = self.pec.directory.data.struct.OffsetToData + 2
+        data_rva = self.pec.directory.data.struct.OffsetToData
         data_size = self.pec.directory.data.struct.Size
 
         resource = self.pec.resource_val_new
