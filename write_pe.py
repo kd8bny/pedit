@@ -15,8 +15,10 @@ class Write_PE(object):
         data_size = self.pec.directory.data.struct.Size
 
         resource = self.pec.resource_val_new
-        empty_space = data_size - len(resource)
-        resource += b'\0' * empty_space
+        if data_size < len(resource):
+            empty_space = data_size - len(resource)
+            resource += b'\0' * empty_space
+
         self.pe.set_bytes_at_rva(data_rva, resource)
 
     def write_executable(self, filename):

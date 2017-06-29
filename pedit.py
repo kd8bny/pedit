@@ -106,20 +106,31 @@ class PEdit(object):
                 subprocess.run([EDITOR, temp_file.name])
 
                 temp_file.seek(0)
-                tf = temp_file.read()
-                resource_val_new = bytes(tf)
+                resource_val_new = bytes(temp_file.read())
 
                 if resource_val_new == self.pec.resource_val:
                     sys.exit("\nResource was not changed. Exiting\n")
                 elif len(resource_val_new) > data_size:
                     resource_val = resource_val_new
-                    input("\nNew resources is too large to insert into this resource by {0} bytes.\nPress any key to continue".format(len(resource_val) - data_size))
+                    option = input(
+                        "\nNew resources is too large to insert into this " +
+                        "resource by {0} bytes.\nPress any key to continue [f]force [q]quit: ".format(len(resource_val) - data_size))
+
+                    if  option.lower() == 'f':
+                        break
+                    elif option.lower() == 'q':
+                        sys.exit()
                 else:
                     break
 
         return resource_val_new
 
     def insert_resource(self, filename):
+        """Insert file into resource.
+
+        :param filename path to file
+        :return bytestring of file object
+        """
         if not os.path.isfile(filename):
             sys.exit("Supplied file to insert does not exist.")
 
@@ -139,7 +150,7 @@ class PEdit(object):
         args = self.get_args()
 
         if args.version:
-            sys.exit(_version)
+            sys.exit(self._version)
 
         if not os.path.isfile(args.file):
             sys.exit("Supplied pe is not a correct file or location")

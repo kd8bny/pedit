@@ -28,7 +28,6 @@ class Read_PE(object):
 
     def get_resource_val(self):
         """Return value at selected directory."""
-        resource_val = list()
 
         data_rva = self.pec.directory.data.struct.OffsetToData
         data_size = self.pec.directory.data.struct.Size
