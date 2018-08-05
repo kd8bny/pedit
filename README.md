@@ -3,13 +3,13 @@
 ## About
 Pedit, portable executable resource editor.
 
-The peedit python application starts the interactive session to allow the user
+The pedit python application starts the interactive session to allow the user
 to select the desired resource to edit and provide means to edit resources.
 
 Pedit makes use of the pefile module and utilizes many data structures of such.
 
-When loaded, pedit with instantiate a pe container which will contain the pe
-object, chosen resources and respective values.
+When loaded, pedit will instantiate a pe-container. This container will hold
+the pe-object with chosen resources and respective values.
 ## How To
 ### TL;DR
 ```
